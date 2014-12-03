@@ -26,7 +26,8 @@ use xml2hash;
 my @in=<>;
 print @in;
 print "=====\n";
-my %outhash=XMLinArray(@in);
+my $oneline=join("",@in);
+my %outhash=XMLin($oneline);
 print Dumper(%outhash);
 
 

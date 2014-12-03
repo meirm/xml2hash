@@ -5,9 +5,25 @@ use xml2hash;
 
 my @in=<>;
 print @in;
-my %outhash=XMLin(@in);
+my %outhash=XMLinArray(@in);
 print Dumper(%outhash);
 ```
+or 
+
+```
+use strict;
+use warnings;
+use Data::Dumper;
+use xml2hash;
+
+my @in=<>;
+print @in;
+print "=====\n";
+my $oneline=join("",@in);
+my %outhash=XMLin($oneline);
+print Dumper(%outhash);
+```
+
 Sample Input:
 ```
 <!-- Add some comment here -->

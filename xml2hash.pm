@@ -20,7 +20,22 @@
 
 use strict;
 use warnings;
+
 sub XMLin{
+	my($in)=@_;
+	my %hash;
+	$in=~s/\n//g;
+	$in=~s/<!--.*?-->//g;
+	$in=~s/>\s*</>\n</g;
+	my @lines=split("\n",$in);
+	print "$_\n" foreach @lines;
+	&reformat(\@lines);
+	&insertbranch(\%hash,\@lines) while @lines;
+	&simplify(\%hash);
+	return %hash;
+}
+
+sub XMLinArray{
 	my @lines;
 	my %hash;
 	@lines=@_;
