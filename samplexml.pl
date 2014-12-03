@@ -20,14 +20,12 @@
 
 use strict;
 use warnings;
-use xml2hash;
 use Data::Dumper;
-#my $xml=xml2hash->new();
+use xml2hash;
 
 my @in=<>;
 print @in;
 print "=====\n";
-#my %outhash=$xml->XMLin(@in);
 my %outhash=XMLin(@in);
 print Dumper(%outhash);
 
