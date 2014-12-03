@@ -22,28 +22,23 @@ use strict;
 use warnings;
 
 sub XMLin{
-	my($in)=@_;
-	my %hash;
-	$in=~s/\n//g;
-	$in=~s/<!--.*?-->//g;
-	$in=~s/>\s*</>\n</g;
-	my @lines=split("\n",$in);
-	print "$_\n" foreach @lines;
-	&reformat(\@lines);
-	&insertbranch(\%hash,\@lines) while @lines;
-	&simplify(\%hash);
-	return %hash;
+        my($in)=@_;
+        $in=~s/\n//g;
+        $in=~s/<!--.*?-->//g;
+        $in=~s/>\s*</>\n</g;
+        my @lines=split("\n",$in);
+        return XMLinArray(@lines);
 }
 
 sub XMLinArray{
-	my @lines;
-	my %hash;
-	@lines=@_;
-	&reformat(\@lines);
-	&removeComments(\@lines);
-	&insertbranch(\%hash,\@lines) while @lines;
-	&simplify(\%hash);
-	return %hash;
+        my @lines;
+        my %hash;
+        @lines=@_;
+        @lines=&reformat(@lines);
+        &removeComments(\@lines);
+        &insertbranch(\%hash,\@lines) while @lines;
+        &simplify(\%hash);
+        return %hash;
 }
 
 sub removeComments{
@@ -84,42 +79,25 @@ sub simplify{
 }
 
 sub insertbranch{
-	my($hashref,$linesref)=@_;
-	my $keyline=shift @{$linesref};
-	return if $keyline=~m/^\s*$/;
-	while($keyline=~ m#>(.*?)=(.*)<#){
-		$hashref->{$1}=$2;
-		return unless @{$linesref};
-		$keyline=shift @{$linesref};
-	}
-	while ($keyline=~ m#<(.*)>(.*)</\1>#){
-		push @{$hashref->{$1}},$2;
-		return unless @{$linesref};
-		$keyline=shift @{$linesref};
-	}
-	while (defined ($keyline) && $keyline=~ m#<([^/]+)>#){
-		my $key=$1;
-		if ($key=~ m#(\S+)\s+(\S+.*)#){ 
-			$key=$1; 
-			&appendAttributes($linesref,$2);
-		}
-		my (@temparray)=&removeAfA($key,$linesref);
-		push @{$hashref->{$key}},undef;
-		&insertbranch(\%{$hashref->{$key}[-1]},\@temparray) while @temparray;
-		return unless @{$linesref};
-		$keyline=shift @{$linesref};
-	}
-
+        my($hashref,$linesref)=@_;
+        my $keyline=shift @{$linesref};
+        return if $keyline=~m/^\s*$/;
+        while ($keyline=~ m#<(.*)>(.*)</\1>#){
+                push @{$hashref->{$1}},$2;
+                return unless @{$linesref};
+                $keyline=shift @{$linesref};
+        }
+        while (defined ($keyline) && $keyline=~ m#<([^/]+)>#){
+                my $key=$1;
+                my (@temparray)=&removeAfA($key,$linesref);
+                push @{$hashref->{$key}},undef;
+                &insertbranch(\%{$hashref->{$key}[-1]},\@temparray) while @temparray;
+                return unless @{$linesref};
+                $keyline=shift @{$linesref};
+        }
 }
 
-sub appendAttributes{
-	my($arref,$attrs)=@_;
-	while($attrs){
-		if($attrs=~ s/(\S+)\s*=\s*"(.*?)"\s*//){
-			unshift(@{$arref},">$1=$2<");
-		}
-	}
-}
+
 sub removeAfA{
 	my($key,$linesref)=@_;
 	my @temparray;
@@ -132,11 +110,23 @@ sub removeAfA{
 }
 
 sub reformat{
-	my($lineref)=@_;
-	foreach (@{$lineref}){
-		chomp;
-		s/^\s*(.*?)\s*$/$1/;
-	}
+        my(@lineref)=@_;
+        my @lines;
+        foreach (@lineref){
+                chomp;
+                s/^\s*(.*?)\s*$/$1/;
+                next if m/^\s*$/;
+                if (($_ !~ m#</#) && (m#<(.*?)\s+(.*)>#)){
+                 my $key=$1;
+                 my $params=$2;
+                 push @lines,"<$key>";
+                 while ($params=~ s/\s*(.*?)\s*=\s*"(.*?)"\s*//){
+                        push @lines,"<$1>$2</$1>";
+                }
+                 next;
+                }
+                push @lines,$_;
+        }
+        return @lines;
 }
-
 1
