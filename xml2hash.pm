@@ -31,8 +31,6 @@ sub XMLin{
 	return %hash;
 }
 
-#print Dumper %hash;
-#print "\n";
 sub removeComments{
 	my ($lineref)=@_;
 	my $in=0;
@@ -50,20 +48,14 @@ sub removeComments{
 
 sub simplify{
 	my($hashref)=@_;
-	#print STDERR "1. " . ref($hashref) ,"\n";
-	#if ((ref($hashref) eq 'HASH' or ref($hashref) eq 'ARRAY')){
 	if (ref($hashref) =~  m/^(:HASH|ARRAY)$/){
 	foreach (keys %{$hashref}){
-		#print STDERR "2. key $_ " . ref($hashref->{$_}) , "\n";
 		if (ref($hashref->{$_}) eq 'ARRAY'){
 			if (@{$hashref->{$_}} == 1){
-				#print STDERR "Single value\n";
 				$hashref->{$_}=$hashref->{$_}[0];
 				if (ref($hashref->{$_}) =~  m/^(:HASH|ARRAY)$/){ &simplify(\%{$hashref->{$_}});}
 			}else{
-				#print STDERR "Multiple values\n";
 				foreach(@{$hashref->{$_}}){
-					#print STDERR "3. " .  ref($_) ,".\n";
 					if (ref($_) =~  m/^(:HASH|ARRAY)$/) {&simplify($_);}
 				}
 			}
