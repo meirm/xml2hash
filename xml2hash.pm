@@ -48,15 +48,15 @@ sub removeComments{
 
 sub simplify{
 	my($hashref)=@_;
-	if (ref($hashref) =~  m/^(:HASH|ARRAY)$/){
+	if (ref($hashref) =~  m/^(HASH|ARRAY)$/){
 	foreach (keys %{$hashref}){
 		if (ref($hashref->{$_}) eq 'ARRAY'){
 			if (@{$hashref->{$_}} == 1){
 				$hashref->{$_}=$hashref->{$_}[0];
-				if (ref($hashref->{$_}) =~  m/^(:HASH|ARRAY)$/){ &simplify(\%{$hashref->{$_}});}
+				if (ref($hashref->{$_}) =~  m/^(HASH|ARRAY)$/){ &simplify(\%{$hashref->{$_}});}
 			}else{
 				foreach(@{$hashref->{$_}}){
-					if (ref($_) =~  m/^(:HASH|ARRAY)$/) {&simplify($_);}
+					if (ref($_) =~  m/^(HASH|ARRAY)$/) {&simplify($_);}
 				}
 			}
 		}else{
