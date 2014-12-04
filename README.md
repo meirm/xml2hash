@@ -1,3 +1,9 @@
+XML2HASH
+--------
+
+Another XML to hash parser.
+
+
 Usage:
 
 ```PERL
