@@ -27,8 +27,8 @@ my @in=<>;
 print @in;
 print "=====\n";
 my $oneline=join("",@in);
-my %outhash=XMLin($oneline);
-print Dumper(%outhash);
+my $outhash=xml2hash::XMLin($oneline);
+print Dumper(%{$outhash});
 
 
 

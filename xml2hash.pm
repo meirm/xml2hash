@@ -1,9 +1,13 @@
 #!/usr/bin/perl 
 #===============================================================================
 #
-#         FILE:  xml2hash.pl
+#         FILE:  xml2hash.pm
 #
-#        USAGE:  ./xml2hash.pl  
+#        USAGE:  
+#        use xml2hash;
+#        $/=undef;
+#        $oneline=<>; 
+#        $hash=XMLin($oneline); 
 #
 #  DESCRIPTION:  
 #
@@ -20,15 +24,8 @@
 
 use strict;
 use warnings;
-
-sub XMLfull{
-        my($in)=@_;
-        $in=~s/\n//g;
-        $in=~s/<!--.*?-->//g;
-        $in=~s/>\s*</>\n</g;
-        my @lines=split("\n",$in);
-        return XMLinArray(@lines);
-}
+package xml2hash;
+my $fullHASH=1;
 
 sub XMLin{
         my($in)=@_;
