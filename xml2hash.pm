@@ -21,13 +21,24 @@
 use strict;
 use warnings;
 
-sub XMLin{
+sub XMLfull{
         my($in)=@_;
         $in=~s/\n//g;
         $in=~s/<!--.*?-->//g;
         $in=~s/>\s*</>\n</g;
         my @lines=split("\n",$in);
         return XMLinArray(@lines);
+}
+
+sub XMLin{
+        my($in)=@_;
+        $in=~s/\n//g;
+        $in=~s/<!--.*?-->//g;
+        $in=~s/>\s*</>\n</g;
+        my @lines=split("\n",$in);
+        my $hash=  XMLinArray(@lines);
+		my @root=keys %{$hash};
+		return \%{$hash->{$root[0]}};
 }
 
 sub XMLinArray{
@@ -38,7 +49,7 @@ sub XMLinArray{
         &removeComments(\@lines);
         &insertbranch(\%hash,\@lines) while @lines;
         &simplify(\%hash);
-        return %hash;
+        return \%hash;
 }
 
 sub removeComments{
@@ -124,7 +135,16 @@ sub reformat{
                         push @lines,"<$1>$2</$1>";
                 }
                  next;
-                }
+                }elsif(m#<(.*)\s(.*)>(.*)</\1>#){
+					push @lines,"<$1>","<content>$3</content>";
+                 	my $key=$1;
+					my $params=$2;
+                 	while ($params=~ s/\s*(.*?)\s*=\s*"(.*?)"\s*//){
+                        push @lines,"<$1>$2</$1>";
+                	}
+					push @lines,"</$key>";
+					next;
+				}
                 push @lines,$_;
         }
         return @lines;
