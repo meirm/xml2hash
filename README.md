@@ -16,26 +16,24 @@ print Dumper(%outhash);
 ```
 or 
 
-```
+```PERL
 use strict;
 use warnings;
 use Data::Dumper;
 use xml2hash;
 
 my @in=<>;
-print @in;
-print "=====\n";
 my $oneline=join("",@in);
 my %outhash=XMLin($oneline);
 print Dumper(%outhash);
 ```
 
 Sample Input:
-```
+```XML
 <!-- Add some comment here -->
 <t0>
 	<t1 name="Mike">
-		<t2>a</t2>
+		<t2 bus="true" memory="false">a</t2>
 		<t2>b</t2>
 		<t3>s</t3>
 	</t1>
@@ -55,15 +53,20 @@ Sample Input:
 
 and the Output:
 
-```
+```PERL
 $VAR1 = 't0';
 $VAR2 = {
           't1' => [
                     {
-                      't3' => 's',
                       't2' => [
-                                'a',
-                                'b'
+                                {
+                                  'memory' => 'false',
+                                  'bus' => 'true',
+                                  'content' => 'a'
+                                },
+                                {
+                                  't3' => 's'
+                                }
                               ],
                       'name' => 'Mike'
                     },

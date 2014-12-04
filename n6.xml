@@ -1,7 +1,7 @@
 <!-- Add some comment here -->
 <t0>
 	<t1 name="Mike">
-		<t2>a</t2>
+		<t2 bus="true" memory="false">a</t2>
 		<t2>b</t2>
 		<t3>s</t3>
 	</t1>
